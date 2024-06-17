@@ -23,8 +23,11 @@
 
     <script>
     document.addEventListener("DOMContentLoaded", function() {
+        var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
         var rssUrl = 'https://perspectives.pilotlifetraining.com/feed/';
-        var apiUrl = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(rssUrl);
+        var apiUrl = proxyUrl + 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(rssUrl);
+        
+        console.log("Fetching RSS feed from:", apiUrl);
         
         fetch(apiUrl)
             .then(response => {
@@ -34,6 +37,7 @@
                 return response.json();
             })
             .then(data => {
+                console.log("Data fetched:", data);
                 if(data.status === 'ok') {
                     var latestPost = data.items[0];
                     var title = latestPost.title;
