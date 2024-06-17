@@ -3,28 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Latest Post</title>
+    <title>RSS Feed</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
         }
-        .latest-post {
+        .post {
             padding: 20px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            margin-bottom: 20px;
         }
-        .latest-post h2 {
+        .post h2 {
             font-size: 24px;
         }
-        .latest-post img {
+        .post img {
             max-width: 100%;
             height: auto;
         }
     </style>
 </head>
 <body>
-    <div id="latest-post" class="latest-post">Loading latest post...</div>
+    <div id="feed-container">Loading feed...</div>
 
     <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -35,28 +36,27 @@
             .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
             .then(data => {
                 var items = data.querySelectorAll("item");
-                if (items.length > 0) {
-                    var latestPost = items[0];
-                    var title = latestPost.querySelector("title").textContent;
-                    var link = latestPost.querySelector("link").textContent;
-                    var description = latestPost.querySelector("description").textContent;
+                var feedContainer = document.getElementById('feed-container');
+                feedContainer.innerHTML = ''; // Clear the loading text
 
-                    var content = '<div class="latest-post">';
+                items.forEach(item => {
+                    var title = item.querySelector("title").textContent;
+                    var link = item.querySelector("link").textContent;
+                    var description = item.querySelector("description").textContent;
+
+                    var content = '<div class="post">';
                     content += '<h2><a href="' + link + '">' + title + '</a></h2>';
                     content += '<p>' + description + '</p>';
                     content += '</div>';
                     
-                    document.getElementById('latest-post').innerHTML = content;
-                } else {
-                    document.getElementById('latest-post').innerText = 'No posts found.';
-                }
+                    feedContainer.innerHTML += content;
+                });
             })
             .catch(error => {
-                console.error('Error fetching the latest post:', error);
-                document.getElementById('latest-post').innerText = 'Error fetching the latest post.';
+                console.error('Error fetching the RSS feed:', error);
+                document.getElementById('feed-container').innerText = 'Error fetching the RSS feed.';
             });
     });
     </script>
 </body>
 </html>
-
