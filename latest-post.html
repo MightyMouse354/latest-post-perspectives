@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latest Post</title>
+    <style>
+        .latest-post {
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .latest-post h2 {
+            font-size: 24px;
+        }
+        .latest-post img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        var rssUrl = 'https://perspectives.pilotlifetraining.com/feed/';
+        var apiUrl = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(rssUrl);
+        
+        $.getJSON(apiUrl, function(data) {
+            if(data.status === 'ok') {
+                var latestPost = data.items[0];
+                var title = latestPost.title;
+                var link = latestPost.link;
+                var description = latestPost.description;
+                var image = latestPost.thumbnail; // Assuming the feed has a thumbnail field
+
+                var content = '<div class="latest-post">';
+                content += '<h2><a href="' + link + '">' + title + '</a></h2>';
+                if (image) {
+                    content += '<img src="' + image + '" alt="' + title + '">';
+                }
+                content += '<p>' + description + '</p>';
+                content += '</div>';
+
+                $('#latest-post').html(content);
+            } else {
+                $('#latest-post').text('Unable to fetch the latest post.');
+            }
+        });
+    });
+    </script>
+</head>
+<body>
+    <div id="latest-post" class="latest-post">Loading latest post...</div>
+</body>
+</html>
