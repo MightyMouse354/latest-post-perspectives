@@ -5,9 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Latest Post</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
         .latest-post {
             padding: 20px;
-            font-family: Arial, sans-serif;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
         .latest-post h2 {
             font-size: 24px;
@@ -26,36 +31,32 @@
         var rssUrl = 'https://perspectives.pilotlifetraining.com/feed/';
         
         fetch(rssUrl)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.text();
-            })
+            .then(response => response.text())
+            .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
             .then(data => {
-                var parser = new DOMParser();
-                var xmlDoc = parser.parseFromString(data, "application/xml");
-                var items = xmlDoc.getElementsByTagName("item");
+                var items = data.querySelectorAll("item");
                 if (items.length > 0) {
                     var latestPost = items[0];
-                    var title = latestPost.getElementsByTagName("title")[0].textContent;
-                    var link = latestPost.getElementsByTagName("link")[0].textContent;
-                    var description = latestPost.getElementsByTagName("description")[0].textContent;
-                    
+                    var title = latestPost.querySelector("title").textContent;
+                    var link = latestPost.querySelector("link").textContent;
+                    var description = latestPost.querySelector("description").textContent;
+
                     var content = '<div class="latest-post">';
                     content += '<h2><a href="' + link + '">' + title + '</a></h2>';
                     content += '<p>' + description + '</p>';
                     content += '</div>';
+                    
                     document.getElementById('latest-post').innerHTML = content;
                 } else {
                     document.getElementById('latest-post').innerText = 'No posts found.';
                 }
             })
             .catch(error => {
-                console.error('There has been a problem with your fetch operation:', error);
+                console.error('Error fetching the latest post:', error);
                 document.getElementById('latest-post').innerText = 'Error fetching the latest post.';
             });
     });
     </script>
 </body>
 </html>
+
