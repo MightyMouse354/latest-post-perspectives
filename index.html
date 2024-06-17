@@ -17,48 +17,48 @@
             height: auto;
         }
     </style>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-    $(document).ready(function() {
-        var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-        var rssUrl = 'https://perspectives.pilotlifetraining.com/feed/';
-        var apiUrl = proxyUrl + rssUrl;
-        
-        console.log("Fetching RSS feed from:", apiUrl);
-        
-        $.getJSON(apiUrl, function(data) {
-            console.log("Data fetched:", data);
-            var parser = new DOMParser();
-            var xmlDoc = parser.parseFromString(data, "text/xml");
-            var items = xmlDoc.getElementsByTagName("item");
-            if (items.length > 0) {
-                var latestPost = items[0];
-                var title = latestPost.getElementsByTagName("title")[0].textContent;
-                var link = latestPost.getElementsByTagName("link")[0].textContent;
-                var description = latestPost.getElementsByTagName("description")[0].textContent;
-                var image = latestPost.getElementsByTagName("media:thumbnail")[0].getAttribute("url");
-
-                var content = '<div class="latest-post">';
-                content += '<h2><a href="' + link + '">' + title + '</a></h2>';
-                if (image) {
-                    content += '<img src="' + image + '" alt="' + title + '">';
-                }
-                content += '<p>' + description + '</p>';
-                content += '</div>';
-
-                $('#latest-post').html(content);
-            } else {
-                $('#latest-post').text('No posts found.');
-            }
-        }).fail(function(jqxhr, textStatus, error) {
-            var err = textStatus + ", " + error;
-            console.log("Request Failed: " + err);
-            $('#latest-post').text('Error fetching the latest post.');
-        });
-    });
-    </script>
 </head>
 <body>
     <div id="latest-post" class="latest-post">Loading latest post...</div>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var rssUrl = 'https://perspectives.pilotlifetraining.com/feed/';
+        var apiUrl = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(rssUrl);
+        
+        fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if(data.status === 'ok') {
+                    var latestPost = data.items[0];
+                    var title = latestPost.title;
+                    var link = latestPost.link;
+                    var description = latestPost.description;
+                    var image = latestPost.thumbnail; // Assuming the feed has a thumbnail field
+
+                    var content = '<div class="latest-post">';
+                    content += '<h2><a href="' + link + '">' + title + '</a></h2>';
+                    if (image) {
+                        content += '<img src="' + image + '" alt="' + title + '">';
+                    }
+                    content += '<p>' + description + '</p>';
+                    content += '</div>';
+
+                    document.getElementById('latest-post').innerHTML = content;
+                } else {
+                    document.getElementById('latest-post').innerText = 'Unable to fetch the latest post.';
+                }
+            })
+            .catch(error => {
+                console.error('There has been a problem with your fetch operation:', error);
+                document.getElementById('latest-post').innerText = 'Error fetching the latest post.';
+            });
+    });
+    </script>
 </body>
 </html>
