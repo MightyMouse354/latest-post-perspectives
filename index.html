@@ -24,30 +24,37 @@
     <script>
     document.addEventListener("DOMContentLoaded", function() {
         var rssUrl = 'https://perspectives.pilotlifetraining.com/feed/';
+        var apiUrl = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(rssUrl);
         
-        fetch(rssUrl)
+        console.log("Fetching RSS feed from:", apiUrl);
+        
+        fetch(apiUrl)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-                return response.text();
+                return response.json();
             })
             .then(data => {
-                var parser = new DOMParser();
-                var xmlDoc = parser.parseFromString(data, "text/xml");
-                var items = xmlDoc.getElementsByTagName("item");
-                if (items.length > 0) {
-                    var latestPost = items[0];
-                    var title = latestPost.getElementsByTagName("title")[0].textContent;
-                    var link = latestPost.getElementsByTagName("link")[0].textContent;
-                    var description = latestPost.getElementsByTagName("description")[0].textContent;
+                console.log("Data fetched:", data);
+                if(data.status === 'ok') {
+                    var latestPost = data.items[0];
+                    var title = latestPost.title;
+                    var link = latestPost.link;
+                    var description = latestPost.description;
+                    var image = latestPost.thumbnail; // Assuming the feed has a thumbnail field
+
                     var content = '<div class="latest-post">';
                     content += '<h2><a href="' + link + '">' + title + '</a></h2>';
+                    if (image) {
+                        content += '<img src="' + image + '" alt="' + title + '">';
+                    }
                     content += '<p>' + description + '</p>';
                     content += '</div>';
+
                     document.getElementById('latest-post').innerHTML = content;
                 } else {
-                    document.getElementById('latest-post').innerText = 'No posts found.';
+                    document.getElementById('latest-post').innerText = 'Unable to fetch the latest post.';
                 }
             })
             .catch(error => {
