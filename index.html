@@ -29,9 +29,11 @@
 
     <script>
     document.addEventListener("DOMContentLoaded", function() {
+        var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
         var rssUrl = 'https://perspectives.pilotlifetraining.com/feed/';
+        var apiUrl = proxyUrl + rssUrl;
         
-        fetch(rssUrl)
+        fetch(apiUrl)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
