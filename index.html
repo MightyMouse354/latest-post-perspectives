@@ -1,75 +1,61 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RSS Feed</title>
+    <title>Latest Post</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: Avenir, Arial, sans-serif;
             margin: 20px;
         }
         .post {
+            display: flex;
+            align-items: flex-start;
             padding: 20px;
             border: 1px solid #ccc;
             border-radius: 5px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .post img {
+            max-width: 400px;
+            height: auto;
+            margin-right: 20px;
+        }
+        .post div {
+            flex: 1;
         }
         .post h2 {
             font-size: 24px;
+            margin: 0;
         }
-        .post img {
-            max-width: 100%;
-            height: auto;
+        .post p {
+            margin: 10px 0;
+        }
+        .post .meta {
+            font-size: 14px;
+            color: #555;
+        }
+        .post a {
+            color: #00bf9a;
+            text-decoration: none;
+        }
+        .post a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 600px) {
+            .post {
+                flex-direction: column;
+                align-items: center;
+            }
+            .post img {
+                margin-right: 0;
+                margin-bottom: 20px;
+                max-width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-    <div id="feed-container">Loading feed...</div>
-
-    <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        var rssUrl = 'https://perspectives.pilotlifetraining.com/feed/';
-        var apiUrl = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(rssUrl);
-        
-        fetch(apiUrl)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.status === 'ok') {
-                    var items = data.items;
-                    var feedContainer = document.getElementById('feed-container');
-                    feedContainer.innerHTML = ''; // Clear the loading text
-
-                    items.forEach(item => {
-                        var title = item.title;
-                        var link = item.link;
-                        var description = item.description;
-                        var image = item.thumbnail;
-
-                        var content = '<div class="post">';
-                        content += '<h2><a href="' + link + '">' + title + '</a></h2>';
-                        if (image) {
-                            content += '<img src="' + image + '" alt="' + title + '">';
-                        }
-                        content += '<p>' + description + '</p>';
-                        content += '</div>';
-                        
-                        feedContainer.innerHTML += content;
-                    });
-                } else {
-                    document.getElementById('feed-container').innerText = 'Unable to fetch the RSS feed.';
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching the RSS feed:', error);
-                document.getElementById('feed-container').innerText = 'Error fetching the RSS feed. ' + error;
-            });
-    });
-    </script>
+    <iframe src="https://script.google.com/macros/s/AKfycbyjtiVUp3otQ0RDatk7OqeBniza_fJlMBrzzMIW3j7Vr3L51GfUvxbLnaMp2UgeHp_8/exec" width="100%" height="600" frameborder="0"></iframe>
 </body>
 </html>
