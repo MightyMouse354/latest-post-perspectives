@@ -32,9 +32,17 @@
         var rssUrl = 'https://perspectives.pilotlifetraining.com/feed/';
         
         fetch(rssUrl)
-            .then(response => response.text())
-            .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
-            .then(data => {
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(str => {
+                console.log("Raw RSS feed data:", str); // Log raw data for debugging
+                var parser = new window.DOMParser();
+                var data = parser.parseFromString(str, "application/xml");
+                console.log("Parsed XML data:", data); // Log parsed data for debugging
                 var items = data.querySelectorAll("item");
                 var feedContainer = document.getElementById('feed-container');
                 feedContainer.innerHTML = ''; // Clear the loading text
@@ -54,7 +62,7 @@
             })
             .catch(error => {
                 console.error('Error fetching the RSS feed:', error);
-                document.getElementById('feed-container').innerText = 'Error fetching the RSS feed.';
+                document.getElementById('feed-container').innerText = 'Error fetching the RSS feed. ' + error;
             });
     });
     </script>
