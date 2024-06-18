@@ -40,7 +40,6 @@
                 return response.json();
             })
             .then(data => {
-                console.log("Data fetched:", data);
                 if (data.status === 'ok') {
                     var items = data.items;
                     var feedContainer = document.getElementById('feed-container');
